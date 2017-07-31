@@ -14,7 +14,7 @@ var Enemy = function(speed) {
 	// a helper we've provided to easily load images
 	this.sprite = 'images/enemy-bug.png';
 	this.x = -100; //it starts outside the canvas
-	this.y = canvasY[Math.floor(Math.random() * canvasY.length)];
+	this.y = canvasY[Math.floor(Math.random() * canvasY.length)]; //random starting Y tile from option array
 	this.speed = speed;
 };
 // Update the enemy's position, required method for game
@@ -23,7 +23,7 @@ Enemy.prototype.update = function(dt) {
 	// You should multiply any movement by the dt parameter
 	// which will ensure the game runs at the same speed for
 	// all computers.
-	this.x += this.speed * dt; //= this.x + (dt * 800 * Math.random());
+	this.x += this.speed * dt;
 	//reset enemies if gone all the way out the canvas to the right
 	if (this.x > 500) {
 		this.x = -100;
@@ -43,7 +43,7 @@ Enemy.prototype.render = function() {
 // a handleInput() method.
 var Player = function() {
 	//the sprite for the player to load its image
-	this.sprite = 'images/char-boy.png';
+	this.sprite = 'images/char-horn-girl.png';
 	this.x = playerX;
 	this.y = playerY;
 };
@@ -51,7 +51,7 @@ var Player = function() {
 Player.prototype.update = function(dt) {
 	this.x = playerX;
 	this.y = playerY;
-	//if won (made it to water), reset
+	//if won (made it to water), add 1 to score and reset
 	if (this.y === -10) {
 		playerScore += 1;
 		reset();
@@ -62,7 +62,7 @@ Player.prototype.render = function() {
 	ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 };
 // move the player according to user keypress and
-// check for boundaries to reset if gone off the console
+// check for boundaries to reset (game over) if gone off canvas
 Player.prototype.handleInput = function(keypress) {
 	if (keypress === 'left') {
 		if (playerX === 0) {
@@ -109,11 +109,11 @@ function reset() {
 // Place the player object in a variable called player
 //new Enemy is generated with a speed between 100 and 500
 var allEnemies = [
-	new Enemy(Math.floor(Math.random() * 401) + 100),
-	new Enemy(Math.floor(Math.random() * 401) + 100),
-	new Enemy(Math.floor(Math.random() * 401) + 100),
-	new Enemy(Math.floor(Math.random() * 401) + 100),
-	new Enemy(Math.floor(Math.random() * 401) + 100),
+	new Enemy(Math.floor(Math.random() * 501) + 100),
+	new Enemy(Math.floor(Math.random() * 501) + 100),
+	new Enemy(Math.floor(Math.random() * 501) + 100),
+	new Enemy(Math.floor(Math.random() * 501) + 100),
+	new Enemy(Math.floor(Math.random() * 501) + 100),
 ];
 var player = new Player();
 // This listens for key presses and sends the keys to your
@@ -126,3 +126,4 @@ document.addEventListener('keyup', function(e) {
 		40: 'down'
 	};
 	player.handleInput(allowedKeys[e.keyCode]);
+});
