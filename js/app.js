@@ -94,7 +94,7 @@ Player.prototype.handleInput = function(keypress) {
 	}
 };
 // reset player to starting position if won and write a message to html if lost
-function reset() {
+var reset = function() {
 	if (playerY === -10) {
 		playerX = 200;
 		playerY = 400;
