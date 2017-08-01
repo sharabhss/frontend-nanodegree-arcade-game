@@ -24,7 +24,7 @@ The game ends if either of the follow scenarios occur
 * Open "index.html" file with your prefered browser
 * Enjoy the game!
 
-[Download here](https://sharabhss.github.io/frontend-nanodegree-arcade-game/)
+[Play here](https://sharabhss.github.io/frontend-nanodegree-arcade-game/)
 
 # Project requirement
 
