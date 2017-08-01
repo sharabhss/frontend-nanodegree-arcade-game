@@ -1,20 +1,29 @@
-// player start position for x and y
-var playerX = 200;
-var playerY = 400;
-// values possible for bugs to move around the canvas
-var canvasX = [0, 100, 200, 300, 400];
-var canvasY = [72, 154, 236]; //white tile positions
-// keep score
-var playerScore = 0;
+"use strict";
+// Object of players and enemies with their attributes available to use
+var characters = {
+	player: {
+		boy: "images/char-boy.png",
+		hornGirl: "images/char-horn-girl.png",
+		catGirl: "images/char-cat-girl.png",
+		x: 200,
+		y: 400,
+		score: 0
+	},
+	enemy: {
+		bug: "images/enemy-bug.png",
+		x: [0, 100, 200, 300, 400],
+		y: [72, 154, 236]
+	}
+};
 // Enemies our player must avoid
 var Enemy = function(speed) {
 	// Variables applied to each of our instances go here,
 	// we've provided one for you to get started
 	// The image/sprite for our enemies, this uses
 	// a helper we've provided to easily load images
-	this.sprite = 'images/enemy-bug.png';
+	this.sprite = characters.enemy.bug;
 	this.x = -100; //it starts outside the canvas
-	this.y = canvasY[Math.floor(Math.random() * canvasY.length)]; //random starting Y tile from option array
+	this.y = characters.enemy.y[Math.floor(Math.random() * characters.enemy.y.length)]; //random starting Y tile from option array
 	this.speed = speed;
 };
 // Update the enemy's position, required method for game
@@ -27,11 +36,14 @@ Enemy.prototype.update = function(dt) {
 	//reset enemies if gone all the way out the canvas to the right
 	if (this.x > 500) {
 		this.x = -100;
-		this.y = canvasY[Math.floor(Math.random() * canvasY.length)];
+		this.y = characters.enemy.y[Math.floor(Math.random() * characters.enemy.y.length)];
 	}
-	// collision system
-	if (this.x - playerX < 50 && this.x - playerX > 0 && this.y === playerY) {
-		reset();
+	this.checkCollisions();
+};
+// collision system
+Enemy.prototype.checkCollisions = function(){
+	if (this.x - player.x < 70 && this.x - player.x > 0 && this.y === player.y) {
+		player.reset();
 	}
 };
 // Draw the enemy on the screen, required method for game
@@ -42,19 +54,19 @@ Enemy.prototype.render = function() {
 // This class requires an update(), render() and
 // a handleInput() method.
 var Player = function() {
+	this.score = characters.player.score;
+	//this.score = characters.player.score;
 	//the sprite for the player to load its image
-	this.sprite = 'images/char-horn-girl.png';
-	this.x = playerX;
-	this.y = playerY;
+	this.sprite = characters.player.hornGirl;
+	this.x = characters.player.x;
+	this.y = characters.player.y;
 };
 // update player coordinates
 Player.prototype.update = function(dt) {
-	this.x = playerX;
-	this.y = playerY;
 	//if won (made it to water), add 1 to score and reset
 	if (this.y === -10) {
-		playerScore += 1;
-		reset();
+		player.score++;
+		this.reset();
 	}
 };
 // render player in the game at the given coordinates
@@ -62,52 +74,51 @@ Player.prototype.render = function() {
 	ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 };
 // move the player according to user keypress and
-// check for boundaries to reset (game over) if gone off canvas
+// check for boundaries and stop player on tile if trying to go off canvas
 Player.prototype.handleInput = function(keypress) {
 	if (keypress === 'left') {
-		if (playerX === 0) {
-			reset();
+		if (this.x === 0) {
+			this.x = 0;
 		} else {
-			playerX -= 100;
+			this.x -= 100;
 		}
 	}
 	if (keypress === 'right') {
-		if (playerX === 400) {
-			reset();
+		if (this.x === 400) {
+			this.x = 400;
 		} else {
-			playerX += 100;
+			this.x += 100;
 		}
 	}
 	if (keypress === 'up') {
-		if (playerY === -10) {
-			reset();
+		if (this.y === -10) {
+			this.y = -10
 		} else {
-			playerY -= 82;
+			this.y -= 82;
 		}
 	}
 	if (keypress === 'down') {
-		if (playerY === 400) {
-			reset();
+		if (this.y === 400) {
+			this.y = 400;
 		} else {
-			playerY += 82;
+			this.y += 82;
 		}
 	}
 };
-// reset player to starting position if won and write a message to html if lost
-var reset = function() {
-	if (playerY === -10) {
-		playerX = 200;
-		playerY = 400;
-	} else {
-		document.write("<h1>Game Over!</h1><h2>Score = " + playerScore + "</h2><h3>Refresh to play again.</h3>");
-		playerX = 200;
-		playerY = 400;
+// reset player to starting position if won or create a dialog with score and restart if lost
+Player.prototype.reset = function() {
+	if (this.y === -10) {
+		this.x = 200;
+		this.y = 400;
+	} else {	
+		confirm("Game Over!\nYour score = "+ player.score + "\nRefresh the page or press OK to start again!");
+		location.reload();
 	}
 }
 // Now instantiate your objects.
 // Place all enemy objects in an array called allEnemies
 // Place the player object in a variable called player
-//new Enemy is generated with a speed between 100 and 500
+//new Enemy is generated with a speed between 100 and 600
 var allEnemies = [
 	new Enemy(Math.floor(Math.random() * 501) + 100),
 	new Enemy(Math.floor(Math.random() * 501) + 100),
